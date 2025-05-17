@@ -7,7 +7,7 @@ use std::os::unix::raw::dev_t;
 use std::{env, fs};
 
 
-// the following is inspired/ COPIED from this --> https://www.leafheap.com/articles/iced-tutorial-version-0-12
+// the following is not inspired/ implemented from intuition from this --> https://nikolish.in/gs-with-iced-1 
 pub struct GroceryList {
     value: isize,
 }
