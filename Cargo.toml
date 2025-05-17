@@ -7,3 +7,4 @@ edition = "2024"
 
 [dependencies]
 iced = {version = "0.12.1"}
+rayon = "1.10.0"

@@ -5,7 +5,7 @@ use std::f32::consts::{LN_10, LOG2_10};
 use std::fs::File;
 use std::{env, fs};
 
-
+use rayon::prelude::*;
 // the following is inspired/ COPIED from this --> https://www.leafheap.com/articles/iced-tutorial-version-0-12
 pub struct GroceryList {
     input_value: String,
@@ -88,7 +88,31 @@ fn add_grocery_to_cache(input: String)
 fn main() {
     // Force the application to use X11 instead of Wayland
     //    unsafe{ env::set_var("WINIT_UNIX_BACKEND", "x11");} --> Claude is DUMB
-
-    let _ = GroceryList::run(Settings::default());
+    
+    // let _ = GroceryList::run(Settings::default());
     // println!("{}",String::default())
+    let vect = vec![1,2,3,4];
+    let v: Vec<i32> = (1..=1000000).collect();
+    // let it = vec![1,2,3,4].iter();
+    // println!("{:?}",vect.into_iter());
+    // vect.par_iter().for_each(|value| println!("{}",value));
+    use std::time::Instant;
+    use std::thread;
+    use std::time::Duration;
+
+    let start = Instant::now();
+    v.iter().for_each(|value| println!("{}",value));
+    let end = Instant::now();
+
+    let duration_iter = end.duration_since(start);
+
+    let start = Instant::now();
+    v.par_iter().for_each(|value| println!("{}",value));
+    let end = Instant::now();
+
+    let duration_par = end.duration_since(start);
+    
+    println!("Time elapsed with par: {:?}", duration_par);
+
+    println!("Time elapsed without par_iter: {:?}", duration_iter);
 }
