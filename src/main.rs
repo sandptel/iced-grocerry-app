@@ -3,42 +3,41 @@ use iced::widget::{Column, button, column, container, row, text, text_input,scro
 use iced::{Element, Length, Sandbox, Settings, alignment};
 use std::f32::consts::{LN_10, LOG2_10};
 use std::fs::File;
+use std::os::unix::raw::dev_t;
 use std::{env, fs};
 
 
 // the following is inspired/ COPIED from this --> https://www.leafheap.com/articles/iced-tutorial-version-0-12
 pub struct GroceryList {
-    input_value: String,
-    grocery_list: Vec<String>
+    value: isize,
 }
 
 #[derive(Debug, Clone)]
 pub enum Message {
-    InputAdded(String),
-    InputRemoved(usize),
-    Submitted,
+    Increment,
+    Decrement
 }
 
-fn view_grocery_items(input: & Vec<String>) -> Element<'static, Message>
-{
-    let mut column = Column::new();
+// fn view_grocery_items(input: & Vec<String>) -> Element<'static, Message>
+// {
+//     let mut column = Column::new();
 
-    for (index,i) in input.iter().enumerate()
-    {
-        let delete_button = button("delete").on_press(Message::InputRemoved(index)).padding(LN_10);
-        let text_bar = text(i);
-        let row = row![text_bar,delete_button].spacing(LOG2_10).align_items(iced::Alignment::Center);
-        column = column.push(row);  
-    }
+//     for (index,i) in input.iter().enumerate()
+//     {
+//         let delete_button = button("delete").on_press(Message::InputRemoved(index)).padding(LN_10);
+//         let text_bar = text(i);
+//         let row = row![text_bar,delete_button].spacing(LOG2_10).align_items(iced::Alignment::Center);
+//         column = column.push(row);  
+//     }
     
-    container(column).height(Length::Fill).width(Length::Fill).into()
-}
+//     container(column).height(Length::Fill).width(Length::Fill).into()
+// }
 
 impl Sandbox for GroceryList {
     type Message = Message;
 
     fn new() -> Self {
-        Self {input_value: String::default(), grocery_list: vec!["Milk".to_owned(),"Cheese".to_owned()]}
+    Self{value: 0}
     }
 
     fn title(&self) -> String {
@@ -47,14 +46,15 @@ impl Sandbox for GroceryList {
 
     fn update(&mut self, message: Self::Message) {
         match message{
-            Message::InputAdded(value)=>{self.input_value = value},
-            Message::InputRemoved(index)=>{self.grocery_list.remove(index);},
-            Message::Submitted=> {
-                self.grocery_list.push(self.input_value.clone());
-                self.input_value = String::default();
+            Message::Increment =>{
+                self.value = self.value+1;
+            },
+            Message::Decrement=>{
+                self.value = self.value -1;
+            }
         }
     }
-}
+
 
     fn view(&self) -> Element<'_, Self::Message> {
         // text is a method defined in Iced
@@ -69,21 +69,19 @@ impl Sandbox for GroceryList {
         // container(text("No Groceries )---")).height(Length::Fill).width(Length::Fill).align_x(alignment::Horizontal::Center).align_y(alignment::Vertical::Center).into()
         // if you want ot add 2 texts together mix those with column![..., ...].into() macro....
         // let groceries = vec![]
-        let input_field = text_input("You have to type some Names here? ",&self.input_value).on_input(|input| Message::InputAdded(input)).on_submit(Message::Submitted);
+
         // let mut grocerries = GroceryList::new();
-        let button = button("Submit").on_press(Message::Submitted);
-        column![view_grocery_items(&self.grocery_list ),row![input_field, button]].padding(30).into()
+
+        let increment = button("increment").width(Length::Fill).height(Length::Fill).on_press(Message::Increment);
+        let decrement = button("decrement").width(Length::Fill).height(Length::Fill).on_press(Message::Decrement);
+        let value = text(self.value).width(Length::Fill).height(Length::Fill).size(100).vertical_alignment(alignment::Vertical::Center).horizontal_alignment(alignment::Horizontal::Center);
+        let row = row![decrement,value,increment].height(Length::Fill).width(Length::Fill);
+        row.into()
     }
 
     fn theme(&self) -> iced::Theme {
         iced::Theme::Dark
     }
-}
-
-fn add_grocery_to_cache(input: String)
-{
-   let fd = File::create_new("./cache.txt");
-   
 }
 fn main() {
     // Force the application to use X11 instead of Wayland
