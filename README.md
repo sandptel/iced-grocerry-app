@@ -14,4 +14,5 @@ if you are on any other distro `cargo run` after figuring out how to setup `dlop
 error: WaylandError(Connection(NoWaylandLib)) })
 note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
+![screenshot](https://github.com/user-attachments/assets/c7acc43e-442f-499a-9889-b73eec081ce8)
 
